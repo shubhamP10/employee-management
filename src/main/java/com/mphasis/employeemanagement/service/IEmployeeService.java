@@ -1,6 +1,7 @@
 package com.mphasis.employeemanagement.service;
 
 import com.mphasis.employeemanagement.model.Employee;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface IEmployeeService {
     Employee updateEmployee(int id, Employee employeeDetails);
 
     void deleteEmployeeById(int id);
+
+    Employee updateEmployeeSalaryById(int id, double salary);
 }

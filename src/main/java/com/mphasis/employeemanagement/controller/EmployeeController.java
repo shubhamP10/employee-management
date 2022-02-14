@@ -1,18 +1,32 @@
 package com.mphasis.employeemanagement.controller;
 
+import com.mphasis.employeemanagement.payload.ApiResponse;
+import com.mphasis.employeemanagement.payload.EmployeeDto;
 import com.mphasis.employeemanagement.model.Employee;
+import com.mphasis.employeemanagement.service.EmployeeService;
 import com.mphasis.employeemanagement.service.IEmployeeService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController {
 
     @Autowired
-    IEmployeeService service;
+    private ModelMapper modelMapper;
+
+    private final IEmployeeService service;
+
+    public EmployeeController(EmployeeService service) {
+        super();
+        this.service = service;
+    }
 
     @GetMapping("/")
     public String getWelcomeMessage() {
@@ -20,27 +34,49 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee")
-    public Employee addEmployeeDetails(@RequestBody Employee employee) {
-        return service.addEmployee(employee);
+    public ResponseEntity<EmployeeDto> addEmployeeDetails(@RequestBody EmployeeDto employeeDto) {
+        Employee empRequest = modelMapper.map(employeeDto, Employee.class);
+        Employee employee = service.addEmployee(empRequest);
+        EmployeeDto employeeResponse = modelMapper.map(employee, EmployeeDto.class);
+        return new ResponseEntity<>(employeeResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/employee/{id}")
-    public Employee getEmployeeById(@PathVariable int id) {
-        return service.getEmployeeById(id);
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable int id) {
+        Employee employee = service.getEmployeeById(id);
+        EmployeeDto employeeResponse = modelMapper.map(employee, EmployeeDto.class);
+
+        return ResponseEntity.ok(employeeResponse);
     }
 
     @GetMapping("/employees")
-    public List<Employee> getAllEmployees() {
-        return service.getAllEmployees();
+    public List<EmployeeDto> getAllEmployees() {
+        return service.getAllEmployees()
+                .stream()
+                .map(employee -> modelMapper.map(employee, EmployeeDto.class))
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/employee/{id}")
-    public Employee updateEmployeeById(@RequestBody Employee employee, @PathVariable int id) {
-        return service.updateEmployee(id, employee);
+    public ResponseEntity<EmployeeDto> updateEmployeeById(@RequestBody EmployeeDto employeeDto, @PathVariable int id) {
+        Employee empRequest = modelMapper.map(employeeDto, Employee.class);
+        Employee employee = service.updateEmployee(id, empRequest);
+        EmployeeDto employeeResponse = modelMapper.map(employee, EmployeeDto.class);
+        return ResponseEntity.ok().body(employeeResponse);
     }
 
     @DeleteMapping("/employee/{id}")
-    public void deleteEmployeeById(@PathVariable int id) {
+    public ResponseEntity<ApiResponse> deleteEmployeeById(@PathVariable int id) {
         service.deleteEmployeeById(id);
+        ApiResponse apiResponse = new ApiResponse(Boolean.TRUE, "Employee Deleted Successfully", HttpStatus.OK);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/employee/{id}/{salary}")
+    public ResponseEntity<EmployeeDto> updateEmployeeSalaryById(@PathVariable(name = "id")int id,
+                                                                @PathVariable(name = "salary") double salary) {
+        Employee employee = service.updateEmployeeSalaryById(id, salary);
+        EmployeeDto employeeResponse = modelMapper.map(employee, EmployeeDto.class);
+        return ResponseEntity.ok().body(employeeResponse);
     }
 }

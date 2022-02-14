@@ -1,5 +1,6 @@
 package com.mphasis.employeemanagement.service;
 
+import com.mphasis.employeemanagement.exception.EmployeeNotFoundException;
 import com.mphasis.employeemanagement.model.Employee;
 import com.mphasis.employeemanagement.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,12 @@ import java.util.List;
 public class EmployeeService implements IEmployeeService{
 
     @Autowired
-    EmployeeRepository repository;
+    private final EmployeeRepository repository;
+
+    public EmployeeService(EmployeeRepository repository) {
+        super();
+        this.repository = repository;
+    }
 
     @Override
     public Employee addEmployee(Employee employeeDetails) {
@@ -20,7 +26,7 @@ public class EmployeeService implements IEmployeeService{
 
     @Override
     public Employee getEmployeeById(int id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow(()-> new EmployeeNotFoundException(id));
     }
 
     @Override
@@ -30,15 +36,22 @@ public class EmployeeService implements IEmployeeService{
 
     @Override
     public Employee updateEmployee(int id, Employee employeeDetails) {
-        if (repository.findById(id).isPresent()) {
-            employeeDetails.setId(id);
-            return repository.save(employeeDetails);
-        }
-        return null;
+        repository.findById(id).orElseThrow(()-> new EmployeeNotFoundException(id));
+        employeeDetails.setId(id);
+        return repository.save(employeeDetails);
     }
 
     @Override
     public void deleteEmployeeById(int id) {
+        repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
         repository.deleteById(id);
     }
+
+    @Override
+    public Employee updateEmployeeSalaryById(int id, double salary) {
+        Employee employee = repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        employee.setSalary(salary);
+        return repository.save(employee);
+    }
+
 }
