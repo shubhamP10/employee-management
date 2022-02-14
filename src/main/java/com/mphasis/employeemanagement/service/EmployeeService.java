@@ -3,9 +3,11 @@ package com.mphasis.employeemanagement.service;
 import com.mphasis.employeemanagement.model.Employee;
 import com.mphasis.employeemanagement.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class EmployeeService implements IEmployeeService{
 
     @Autowired
@@ -13,7 +15,7 @@ public class EmployeeService implements IEmployeeService{
 
     @Override
     public Employee addEmployee(Employee employeeDetails) {
-        return null;
+        return repository.save(employeeDetails);
     }
 
     @Override
