@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.LongUnaryOperator;
 import java.util.stream.Collectors;
 
 @RestController
@@ -85,5 +87,14 @@ public class EmployeeController {
         double salary = service.getEmployeeSalaryById(id);
 
         return ResponseEntity.ok().body(salary);
+    }
+
+    @GetMapping("/employees/{department}")
+    public List<EmployeeDto> getAllEmployeesByDepartment(@PathVariable String department) {
+        List<Employee> employeesByDepartment = service.getEmployeesByDepartment(department);
+        return employeesByDepartment.stream()
+                .map(employee -> modelMapper.map(employee, EmployeeDto.class))
+                .sorted(Comparator.comparing(EmployeeDto::getId))
+                .collect(Collectors.toList());
     }
 }

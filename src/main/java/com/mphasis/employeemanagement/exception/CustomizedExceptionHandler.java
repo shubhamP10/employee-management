@@ -18,7 +18,13 @@ import java.util.Date;
 public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EmployeeNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleStudentNotFoundException(EmployeeNotFoundException ex, WebRequest request){
+    public ResponseEntity<ExceptionResponse> handleEmployeeNotFoundException(EmployeeNotFoundException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage(), new Date(), request.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DepartmentNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleDepartmentNotFoundException(DepartmentNotFoundException ex, WebRequest request){
         ExceptionResponse response = new ExceptionResponse(ex.getMessage(), new Date(), request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }

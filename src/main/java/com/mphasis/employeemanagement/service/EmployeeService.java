@@ -1,6 +1,7 @@
 package com.mphasis.employeemanagement.service;
 
 import com.mphasis.employeemanagement.exception.EmployeeNotFoundException;
+import com.mphasis.employeemanagement.exception.DepartmentNotFoundException;
 import com.mphasis.employeemanagement.model.Employee;
 import com.mphasis.employeemanagement.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class EmployeeService implements IEmployeeService{
 
     @Override
     public List<Employee> getAllEmployees() {
-        return (List<Employee>) repository.findAll();
+        return repository.findAll();
     }
 
     @Override
@@ -58,6 +59,13 @@ public class EmployeeService implements IEmployeeService{
     public double getEmployeeSalaryById(int id) {
         Employee employee = repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
         return employee.getSalary();
+    }
+
+    @Override
+    public List<Employee> getEmployeesByDepartment(String department) {
+        if (repository.getEmployeesByDepartment(department).isEmpty())
+            throw new DepartmentNotFoundException(department);
+        return repository.getEmployeesByDepartment(department);
     }
 
 }
