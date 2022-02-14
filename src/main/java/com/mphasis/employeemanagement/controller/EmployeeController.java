@@ -1,8 +1,8 @@
 package com.mphasis.employeemanagement.controller;
 
+import com.mphasis.employeemanagement.model.Employee;
 import com.mphasis.employeemanagement.payload.ApiResponse;
 import com.mphasis.employeemanagement.payload.EmployeeDto;
-import com.mphasis.employeemanagement.model.Employee;
 import com.mphasis.employeemanagement.service.EmployeeService;
 import com.mphasis.employeemanagement.service.IEmployeeService;
 import org.modelmapper.ModelMapper;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.LongUnaryOperator;
 import java.util.stream.Collectors;
 
 @RestController
