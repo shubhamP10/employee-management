@@ -20,4 +20,6 @@ public interface IEmployeeService {
     void deleteEmployeeById(int id);
 
     Employee updateEmployeeSalaryById(int id, double salary);
+
+    double getEmployeeSalaryById(int id);
 }

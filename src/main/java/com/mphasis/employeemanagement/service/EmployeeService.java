@@ -54,4 +54,10 @@ public class EmployeeService implements IEmployeeService{
         return repository.save(employee);
     }
 
+    @Override
+    public double getEmployeeSalaryById(int id) {
+        Employee employee = repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        return employee.getSalary();
+    }
+
 }

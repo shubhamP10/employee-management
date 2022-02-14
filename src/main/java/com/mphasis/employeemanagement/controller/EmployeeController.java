@@ -79,4 +79,11 @@ public class EmployeeController {
         EmployeeDto employeeResponse = modelMapper.map(employee, EmployeeDto.class);
         return ResponseEntity.ok().body(employeeResponse);
     }
+
+    @GetMapping("/getSalary/{id}")
+    public ResponseEntity<Double> getEmployeeSalaryById(@PathVariable int id) {
+        double salary = service.getEmployeeSalaryById(id);
+
+        return ResponseEntity.ok().body(salary);
+    }
 }
