@@ -20,21 +20,25 @@ public class EmployeeService implements IEmployeeService{
 
     @Override
     public Employee getEmployeeById(int id) {
-        return null;
+        return repository.findById(id).orElse(null);
     }
 
     @Override
     public List<Employee> getAllEmployees() {
-        return null;
+        return (List<Employee>) repository.findAll();
     }
 
     @Override
     public Employee updateEmployee(int id, Employee employeeDetails) {
+        if (repository.findById(id).isPresent()) {
+            employeeDetails.setId(id);
+            return repository.save(employeeDetails);
+        }
         return null;
     }
 
     @Override
     public void deleteEmployeeById(int id) {
-
+        repository.deleteById(id);
     }
 }
