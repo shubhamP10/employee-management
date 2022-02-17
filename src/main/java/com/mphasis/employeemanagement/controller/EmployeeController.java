@@ -8,6 +8,7 @@ import com.mphasis.employeemanagement.service.IEmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class EmployeeController {
         return "Welcome to Employee Management System";
     }
 
-    @PostMapping("/employee")
+    @PostMapping(value = "/employee", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDto> addEmployeeDetails(@RequestBody EmployeeDto employeeDto) {
         Employee empRequest = modelMapper.map(employeeDto, Employee.class);
         Employee employee = service.addEmployee(empRequest);
