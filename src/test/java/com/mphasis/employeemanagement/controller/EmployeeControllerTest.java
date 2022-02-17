@@ -3,6 +3,7 @@ package com.mphasis.employeemanagement.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mphasis.employeemanagement.model.Employee;
+import com.mphasis.employeemanagement.payload.ApiResponse;
 import com.mphasis.employeemanagement.payload.EmployeeDto;
 import com.mphasis.employeemanagement.service.EmployeeService;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +28,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -88,7 +91,7 @@ class EmployeeControllerTest {
     @Test
     void getEmployeeById() throws Exception {
         String requestUri = this.uri += "employee/2";
-        when(service.getEmployeeById(Mockito.anyInt())).thenReturn(employee);
+        when(service.getEmployeeById(anyInt())).thenReturn(employee);
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get(requestUri)
                 .accept(MediaType.APPLICATION_JSON);
 
@@ -117,23 +120,67 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void updateEmployeeById() {
+    void updateEmployeeById() throws Exception {
+        String requestUri = this.uri += "employee/2";
+        String requestJson = this.mapToJson(employeeDto);
+
+        when(service.updateEmployee(anyInt(), Mockito.any(Employee.class))).thenReturn(employee);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put(requestUri)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(requestJson).contentType(MediaType.APPLICATION_JSON);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String responseJson = result.getResponse().getContentAsString();
+
+        assertThat(responseJson).isEqualTo(requestJson);
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
 
     @Test
-    void deleteEmployeeById() {
+    void deleteEmployeeById() throws Exception {
+        String requestUri = this.uri += "employee/2";
+        ApiResponse apiResponse = new ApiResponse(true, "Employee Deleted Successfully", HttpStatus.OK);
+
+        doNothing().when(service).deleteEmployeeById(anyInt());
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(requestUri).accept(MediaType.APPLICATION_JSON);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String responseJson = result.getResponse().getContentAsString();
+        assertThat(responseJson).isEqualTo(this.mapToJson(apiResponse));
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
 
     @Test
-    void updateEmployeeSalaryById() {
+    void updateEmployeeSalaryById() throws Exception {
+        String requestUri = this.uri += "employee/2/4500.0";
+        String expectedJson = this.mapToJson(employeeDto);
+        when(service.updateEmployeeSalaryById(anyInt(), Mockito.anyDouble())).thenReturn(employee);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put(requestUri).accept(MediaType.APPLICATION_JSON);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String responseJson = result.getResponse().getContentAsString();
+
+        assertThat(responseJson).isEqualTo(expectedJson);
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
 
     @Test
-    void getEmployeeSalaryById() {
+    void getEmployeeSalaryById() throws Exception {
+        String requestUri = this.uri += "getSalary/2";
+
+        when(service.getEmployeeSalaryById(anyInt())).thenReturn(25000.0);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get(requestUri).accept(MediaType.APPLICATION_JSON);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String responseJson = result.getResponse().getContentAsString();
+        assertThat(responseJson).isEqualTo("25000.0");
     }
 
     @Test
-    void getAllEmployeesByDepartment() {
+    void getAllEmployeesByDepartment() throws Exception {
+        String requestUri = this.uri += "employees/Design";
+
+        when(service.getEmployeesByDepartment(Mockito.anyString())).thenReturn(employeeList);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get(requestUri).accept(MediaType.APPLICATION_JSON)
+                .content(this.mapToJson(employeeList)).contentType(MediaType.APPLICATION_JSON);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        assertThat(result.getResponse().getContentAsString()).isEqualTo(this.mapToJson(employeeList));
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {
