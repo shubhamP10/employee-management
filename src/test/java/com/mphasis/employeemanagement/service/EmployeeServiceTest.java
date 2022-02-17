@@ -31,10 +31,10 @@ class EmployeeServiceTest {
     private Employee employee;
 
     @MockBean
-    private EmployeeRepository repository;
+    EmployeeRepository repository;
 
     @Autowired
-    private EmployeeService service;
+    EmployeeService service;
 
     @BeforeEach
     void setUp() {
