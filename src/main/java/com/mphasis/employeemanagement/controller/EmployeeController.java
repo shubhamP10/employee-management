@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+
 @RequestMapping("/api/v1")
 public class EmployeeController {
 
@@ -51,6 +52,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeResponse);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/employees")
     public List<EmployeeDto> getAllEmployees() {
         return service.getAllEmployees()

@@ -1,7 +1,6 @@
 package com.mphasis.employeemanagement.service;
 
 import com.mphasis.employeemanagement.exception.DepartmentNotFoundException;
-import com.mphasis.employeemanagement.exception.EmployeeNotFoundException;
 import com.mphasis.employeemanagement.model.Employee;
 import com.mphasis.employeemanagement.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterEach;
